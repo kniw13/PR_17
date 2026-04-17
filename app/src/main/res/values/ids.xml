@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tilFirstName" type="id" />
+    <item name="etFirstName" type="id" />
+    <item name="etLastName" type="id" />
+    <item name="etAge" type="id" />
+    <item name="etRecordId" type="id" />
+    <item name="rbAge" type="id" />
+    <item name="btnSort" type="id" />
+    <item name="rbName" type="id" />
+</resources>

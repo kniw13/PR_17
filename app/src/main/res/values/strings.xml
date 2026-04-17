@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">PR_18</string>
+
+    <!-- Подсказки полей ввода -->
+    <string name="hint_first_name">Имя</string>
+    <string name="hint_last_name">Фамилия</string>
+    <string name="hint_age">Возраст</string>
+    <string name="hint_record_id">ID записи</string>
+
+    <!-- Текст кнопок -->
+    <string name="btn_add">Добавить</string>
+    <string name="btn_read">Читать все</string>
+    <string name="btn_clear">Очистить</string>
+    <string name="btn_update">Обновить по ID</string>
+    <string name="btn_delete">Удалить по ID</string>
+    <string name="btn_sort">Сортировать</string>
+
+    <!-- Заголовки -->
+    <string name="sort_label">Сортировка по:</string>
+    <string name="sort_by_name">По имени (first_name)</string>
+    <string name="sort_by_age">По возрасту (age)</string>
+</resources>
