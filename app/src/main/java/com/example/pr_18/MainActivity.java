@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText etFirstName, etLastName, etAge, etRecordId;
     private Button btnAdd, btnRead, btnClear, btnUpdate, btnDelete, btnSort;
     private RadioGroup rgSort;
+    private TextView tvResult;
 
     private DBHelper dbHelper;
     private SQLiteDatabase db;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLastName = findViewById(R.id.etLastName);
         etAge = findViewById(R.id.etAge);
         etRecordId = findViewById(R.id.etRecordId);
+        tvResult = findViewById(R.id.tvResult);
 
         btnAdd = findViewById(R.id.btnAdd);
         btnRead = findViewById(R.id.btnRead);
@@ -110,16 +113,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d(LOG_TAG, "Добавлена запись, ID = " + rowId);
                 Toast.makeText(this, "Добавлено, ID = " + rowId, Toast.LENGTH_SHORT).show();
                 clearInputFields();
+                tvResult.setText("Добавлена запись с ID = " + rowId);
             } else if (id == R.id.btnRead) {
                 Log.d(LOG_TAG, "--- Чтение всех записей ---");
                 Cursor c = db.query("mytable", null, null, null, null, null, null);
                 printCursor(c);
-                c.close();
             } else if (id == R.id.btnClear) {
                 Log.d(LOG_TAG, "--- Очистка таблицы ---");
                 int deleted = db.delete("mytable", null, null);
                 Log.d(LOG_TAG, "Удалено записей: " + deleted);
                 Toast.makeText(this, "Таблица очищена", Toast.LENGTH_SHORT).show();
+                tvResult.setText("Таблица очищена, удалено " + deleted + " записей");
             } else if (id == R.id.btnUpdate) {
                 if (idStr.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || ageStr.isEmpty()) {
                     Toast.makeText(this, "Введите ID и новые данные", Toast.LENGTH_SHORT).show();
@@ -132,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 int updCount = db.update("mytable", updateVals, "_id = ?", new String[]{idStr});
                 Log.d(LOG_TAG, "Обновлено записей: " + updCount);
                 Toast.makeText(this, "Обновлено: " + updCount, Toast.LENGTH_SHORT).show();
+                tvResult.setText("Обновлено записей: " + updCount);
             } else if (id == R.id.btnDelete) {
                 if (idStr.isEmpty()) {
                     Toast.makeText(this, "Введите ID для удаления", Toast.LENGTH_SHORT).show();
@@ -140,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 int delCount = db.delete("mytable", "_id = ?", new String[]{idStr});
                 Log.d(LOG_TAG, "Удалено записей: " + delCount);
                 Toast.makeText(this, "Удалено: " + delCount, Toast.LENGTH_SHORT).show();
+                tvResult.setText("Удалено записей: " + delCount);
             } else if (id == R.id.btnSort) {
                 String orderBy = "";
                 int checkedId = rgSort.getCheckedRadioButtonId();
@@ -155,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 Cursor sortCursor = db.query("mytable", null, null, null, null, null, orderBy);
                 printCursor(sortCursor);
-                sortCursor.close();
             }
         } finally {
             dbHelper.close();
@@ -164,10 +169,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void printCursor(Cursor c) {
         if (c == null) {
-            Log.d(LOG_TAG, "Курсор пуст");
+            String msg = "Курсор пуст";
+            Log.d(LOG_TAG, msg);
+            tvResult.setText(msg);
             return;
         }
         if (c.moveToFirst()) {
+            StringBuilder resultBuilder = new StringBuilder();
             do {
                 StringBuilder sb = new StringBuilder();
                 String[] colNames = c.getColumnNames();
@@ -176,11 +184,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String value = c.getString(index);
                     sb.append(col).append(" = ").append(value).append("; ");
                 }
-                Log.d(LOG_TAG, sb.toString());
+                String rowStr = sb.toString();
+                Log.d(LOG_TAG, rowStr);
+                resultBuilder.append(rowStr).append("\n");
             } while (c.moveToNext());
+            tvResult.setText(resultBuilder.toString());
         } else {
-            Log.d(LOG_TAG, "Нет записей");
+            String msg = "Нет записей в таблице";
+            Log.d(LOG_TAG, msg);
+            tvResult.setText(msg);
         }
+        c.close();
     }
 
     private void clearInputFields() {
